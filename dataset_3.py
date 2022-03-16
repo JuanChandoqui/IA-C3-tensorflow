@@ -7,14 +7,14 @@ import tensorflow as tf
 if __name__ == "__main__":
     # cargamos las 4 combinaciones de las compuertas XOR
 
-    file='dataset03.txt'
+    file='./Datasets/dataset03.txt'
     datax = np.loadtxt(file, delimiter=',', dtype=np.float32,  skiprows=1, usecols=[0])
     # print(datax)
     # print(datax[1])
     final_data_x = np.split(datax, 1199)
     # print(final_data_x)
     
-    file='dataset03.txt'
+    file='./Datasets/dataset03.txt'
     datay = np.loadtxt(file, delimiter=',', dtype=np.float64,  skiprows=1, usecols=[1])
     # print(datay)
     # print(datay[1])
@@ -25,7 +25,6 @@ if __name__ == "__main__":
       
     # y estos son los resultados que se obtienen, en el mismo orden
     y = np.array(datay)
-
 
 
     # Create the 'Perceptron' using the Keras API
