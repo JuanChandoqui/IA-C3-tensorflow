@@ -1,73 +1,59 @@
+from cProfile import label
 import numpy as np
-from matplotlib import pyplot as plt
-import random
+import matplotlib.pyplot as plt
 import tensorflow as tf
-tf.to_float = lambda x: tf.cast(x, tf.float32)
 
-error_list = []
-#Asignamos el arreglo de X & Y
-X = [
-    [1.0, 0.0, 0.0],
-    [1.0, 0.0, 1.0],
-    [1.0, 1.0, 0.0],
-    [1.0, 1.0, 1.0]
-    ]
+
+def leerTxt(archivo: str):
+    file = f'./Datasets/{archivo}.txt'
+
+    data = np.loadtxt(file, delimiter='\t', dtype=np.float32, skiprows=1, usecols=[0])
+    data_2 = np.loadtxt(file, delimiter='\t', dtype=np.float32, skiprows=1, usecols=[1])
+
+    array_X = []
+    array_Y = []
+
+    for value in data:
+        array_X.append(value)
+
+    for value in data_2:
+        array_Y.append(value)
+
+    print(f'ARRAY Y: {array_Y}')
+    return array_X, array_Y
+
+
+if __name__ == "__main__":
+    #LEER TXT
+    column_1 , column_2 = leerTxt('dataset01')
+
+    # cargamos las 4 combinaciones de las compuertas XOR
+    x = np.array(column_1, "float32")
+
+    # y estos son los resultados que se obtienen, en el mismo orden
+    y = np.array(column_2, "float32")
+
+    #tasa de aprendizaje
+    n = 0.1 
     
-Y = [
-        [0.0],
-        [0.0],
-        [0.0],
-        [1.0]
-    ]
-
-#print("Esto es X: ")
-#print(X)
-#print("Esto es Y: ")
-#print(Y)
-
-#Función de activación
-def activacion(x):
-  return tf.to_float(tf.greater(x, 0))
-
-#Calculos
-def calculos(X, pesos,n,peso_list):
-  u = tf.matmul(X, pesos)
-  salida = activacion(u) #FA
-  error = tf.subtract(Y, salida) #Error
-  e = tf.reduce_mean(tf.square(error)) #Error cuadratico
-  #e = (np.square(Y - salida).mean()) 
-  #print(e)
-  error_list.append(e)
-  if e <= 0.01:
-    print("FIN")
-    pass
-  else:
-    actualizar(error,pesos,X,n,peso_list) #Sigue el entrenamiento
-
-def actualizar(error,pesos,X,n,peso_list):
-  sum_pesos = tf.matmul(X, error, transpose_a=True)
-  sum_pesos = (sum_pesos * n)
-  pesos.assign_add(sum_pesos)
-  peso_list.append(pesos)
-  calculos(X,pesos,n,peso_list) #Se repite el calculo
-
-contador = 1
-for i in range(5):
-  print("Generacion no ",contador)
-  peso_list = []
-  error_list.clear()
-  n = random.random()
-  #print("El valor de n es = "+str(n))
-  pesos = tf.Variable(tf.random.normal([3, 1]))
-  #print("Estos son los pesos generados = ",pesos)
-  calculos(X,pesos,n,peso_list)
-  print("peso final = ",peso_list[-1])
-  plt.plot(error_list, label =f"n = {n}")
-  contador +=1
-
-#Graficación
-plt.legend()
-plt.ylabel('Valor del error cuadratico')
-plt.xlabel('iteracion')
-plt.title('Evolución del perceptrón')
-plt.show()
+    # Create the 'Perceptron' using the Keras API
+    model = tf.keras.models.Sequential()
+    #inicia con pesos aleatorios con kernel_initializer
+    model.add(tf.keras.layers.Dense(1, input_dim=1, activation='linear', kernel_initializer='glorot_uniform', bias_initializer='zeros'))
+    
+    #se utiliza adam ya que permite ajustar los pesos y sesgos, para que pueda mejorar durante el entrenamiento
+    #se coloca la tasa de aprendizaje en Adam
+    model.compile(loss='mean_squared_error', optimizer=tf.keras.optimizers.Adam(n)) 
+    
+    # Train the perceptron using stochastic gradient descent
+    # with a validation split of 20%
+    historial = model.fit(x, y, epochs=150, batch_size=25, verbose=False)
+    result = model.predict(x)
+    print(f'PESOS: {model.get_weights()}')
+    
+    plt.plot(historial.history['loss'], label=f'n={n}')
+    print(f'RESULT: {result}')
+    plt.legend()
+    plt.xlabel("iteraciones")
+    plt.ylabel("errores")
+    plt.show()
