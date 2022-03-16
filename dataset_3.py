@@ -31,20 +31,19 @@ if __name__ == "__main__":
     # Create the 'Perceptron' using the Keras API
     model = tf.keras.models.Sequential()
     #inicia con pesos aleatorios con kernel_initializer
-    model.add(tf.keras.layers.Dense(1, input_dim=1, activation='linear', kernel_initializer='glorot_uniform', bias_initializer='Ones'))
+    model.add(tf.keras.layers.Dense(1, input_dim=1, activation='linear', kernel_initializer='glorot_uniform', bias_initializer='random_uniform'))
     
-   
-        #se utiliza adam ya que permite ajustar los pesos y sesgos, para que pueda mejorar durante el entrenamiento
-        #se coloca la tasa de aprendizaje en Adam
+    #se utiliza adam ya que permite ajustar los pesos y sesgos, para que pueda mejorar durante el entrenamiento
+    #se coloca la tasa de aprendizaje en Adam
     model.compile(loss='mean_squared_error', optimizer=tf.keras.optimizers.Adam(0.0001)) 
         
-        # Train the perceptron using stochastic gradient descent
-        # with a validation split of 20%
-    historial = model.fit(x, y, epochs=500, batch_size=25, verbose=False)
+    # Train the perceptron using stochastic gradient descent
+    # with a validation split of 20%
+    historial = model.fit(x, y, epochs=100, batch_size=25, verbose=False)
     result = model.predict(x).round()
-        # print (result)
+
     print(f'PESOS: {model.get_weights()}')
-        # print(historial.history['loss'])
+
     plt.plot(historial.history['loss'], label=f'n={0.1}')
     plt.legend()
     plt.xlabel("iteraciones")
