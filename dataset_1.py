@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # Create the 'Perceptron' using the Keras API
     model = tf.keras.models.Sequential()
     #inicia con pesos aleatorios con kernel_initializer
-    model.add(tf.keras.layers.Dense(1, input_dim=1, activation='linear', kernel_initializer='glorot_uniform', bias_initializer='Ones'))
+    model.add(tf.keras.layers.Dense(1, input_dim=1, activation='linear', kernel_initializer='glorot_uniform', bias_initializer='zeros'))
     
     #se utiliza adam ya que permite ajustar los pesos y sesgos, para que pueda mejorar durante el entrenamiento
     #se coloca la tasa de aprendizaje en Adam
