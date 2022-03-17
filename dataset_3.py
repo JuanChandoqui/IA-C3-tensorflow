@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 if __name__ == "__main__":
-    # cargamos las 4 combinaciones de las compuertas XOR
 
     file='./Datasets/dataset03.txt'
     datax = np.loadtxt(file, delimiter=',', dtype=np.float32,  skiprows=1, usecols=[0])
@@ -25,7 +24,7 @@ if __name__ == "__main__":
       
     # y estos son los resultados que se obtienen, en el mismo orden
     y = np.array(datay)
-
+ 
 
     # Create the 'Perceptron' using the Keras API
     model = tf.keras.models.Sequential()
@@ -38,9 +37,9 @@ if __name__ == "__main__":
         
     # Train the perceptron using stochastic gradient descent
     # with a validation split of 20%
-    historial = model.fit(x, y, epochs=100, batch_size=25, verbose=False)
-    result = model.predict(x).round()
-
+    historial = model.fit(x, y, epochs=1400, batch_size=25, verbose=False)
+    result = model.predict([40])
+    print(f'RESULTADOS: {result}')
     print(f'PESOS: {model.get_weights()}')
 
     plt.plot(historial.history['loss'], label=f'n={0.1}')
